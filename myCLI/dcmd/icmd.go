@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"myCLI/API"
 	"myCLI/dtype"
+	"myCLI/utils"
 	"net"
+	"os"
 	"time"
 )
 
@@ -13,43 +16,37 @@ func ImageList() {
 	addr := net.UnixAddr{"/var/run/docker.sock", "unix"}
 	conn, err := net.DialUnix("unix", nil, &addr)
 	if err != nil {
-		panic(err)
+		fmt.Println(API.ConnectError)
+		//退出程序
+		os.Exit(-1)
 	}
-	_, err = conn.Write([]byte("GET /images/json HTTP/1.0\r\n\r\n"))
+	_, err = conn.Write([]byte(API.GetImages))
 	if err != nil {
 		panic(err)
 	}
-	result, err_conn := ioutil.ReadAll(conn)
-	if err_conn != nil {
-		panic(err_conn)
+	result, errConn := ioutil.ReadAll(conn)
+	if errConn != nil {
+		panic(errConn)
 	}
-	body := getBody(result[:])
+	body := utils.GetBody(result[:])
 
 	var images []dtype.Image
 
-	err_js := json.Unmarshal(body, &images)
-	if err_js != nil {
-		panic(err_js)
+	errJson := json.Unmarshal(body, &images)
+	if errJson != nil {
+		panic(errJson)
 	}
 	fmt.Println("Number of Images: ", len(images))
 	fmt.Printf("%-20s%-20s%-20s%-20s%s",
 		"REPOSITORY", "TAG", "IMAGE ID", "CREATED", "SIZE")
 	fmt.Println()
-	fmt.Printf("%-20s%-20s%-20s%-20s%d%s",
-		images[0].RepoDigests[0][:5],
-		images[0].RepoTags[0],
-		images[0].Id[7:19],
-		time.Unix(images[0].Created, 0).Format("2006-01-02"),
-		images[0].Size/1000/1000, "MB")
-	fmt.Println()
-
-}
-func getBody(result []byte) (body []byte) {
-	for i := 0; i <= len(result)-4; i++ {
-		if result[i] == 91 && result[i+1] == 123 {
-			body = result[i:]
-			break
-		}
+	for i := 0; i < len(images); i++ {
+		fmt.Printf("%-20s%-20s%-20s%-20s%s",
+			images[i].RepoDigests[0][:5],
+			utils.GetTag(images[i].RepoTags[0]),
+			images[i].Id[7:19],
+			time.Unix(images[i].Created, 0).Format("2006-01-02"),
+			utils.CalSize(images[i].Size))
+		fmt.Println()
 	}
-	return
 }

@@ -16,6 +16,6 @@ type Image struct {
 	RepoDigests []string
 	RepoTags    []string
 	SharedSize  int8
-	Size        uint64
-	VirtualSize uint64
+	Size        int64
+	VirtualSize int64
 }
