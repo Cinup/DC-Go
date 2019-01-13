@@ -1,10 +1,9 @@
 package dcmd
 
 var (
-	Commands map[string]func()
+	Commands = make(map[string]func([]string))
 )
 
 func init() {
-	Commands = map[string]func(){}
 	Commands["ls"] = ImageList
 }

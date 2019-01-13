@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"myCLI/API"
+	"myCLI/api"
 	"myCLI/dtype"
 	"myCLI/utils"
 	"net"
@@ -12,15 +12,20 @@ import (
 	"time"
 )
 
-func ImageList() {
-	addr := net.UnixAddr{"/var/run/docker.sock", "unix"}
+var (
+	name    = "/var/run/docker.sock"
+	network = "unix"
+)
+
+func ImageList(args []string) {
+	addr := net.UnixAddr{name, network}
 	conn, err := net.DialUnix("unix", nil, &addr)
 	if err != nil {
-		fmt.Println(API.ConnectError)
+		fmt.Println(api.ConnectError)
 		//退出程序
 		os.Exit(-1)
 	}
-	_, err = conn.Write([]byte(API.GetImages))
+	_, err = conn.Write([]byte(api.GetImages))
 	if err != nil {
 		panic(err)
 	}
