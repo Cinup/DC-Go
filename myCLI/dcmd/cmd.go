@@ -5,5 +5,5 @@ var (
 )
 
 func init() {
-	Commands["ls"] = ImageList
+	Commands["ls"] = ListImage
 }

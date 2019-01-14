@@ -1,6 +1,5 @@
 package dtype
 
-
 //type Labels struct {
 //	value map[string] string
 //}
@@ -8,14 +7,14 @@ package dtype
 	目前还无法解析到Labels,等待解决
 */
 type Image struct {
-	Containers int8
-	Created    int64
-	Id         string
+	//Containers int8
+	//VirtualSize int64
+	//SharedSize  int8
 	//Labels		Labels
-	ParentId    string
+	//ParentId    string
 	RepoDigests []string
 	RepoTags    []string
-	SharedSize  int8
+	Id          string
+	Created     int64
 	Size        int64
-	VirtualSize int64
 }
